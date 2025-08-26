@@ -148,8 +148,8 @@ processors:
   transform/k8sobjects:
     log_statements:
       - statements:
-          - set(resource.attributes[Concat(["k8s", log.body["object"]["kind"], "lower"), "name"], ".")], log.body["metadata"]["name"])
-          - set(resource.attributes[Concat(["k8s", log.body["object"]["kind"], "lower"), "uid"], ".")], log.body["metadata"]["uid"])
+          - set(resource.attributes[Concat(["k8s", ConvertCase(log.body["object"]["kind"], "lower"), "name"], ".")], log.body["metadata"]["name"])
+          - set(resource.attributes[Concat(["k8s", ConvertCase(log.body["object"]["kind"], "lower"), "uid"], ".")], log.body["metadata"]["uid"])
       - conditions:
           - log.body["object"]["kind"] == "Event" and log.body["object"]["involvedObject"]["kind"] == "Pod"
         statements:

@@ -148,12 +148,11 @@ processors:
   transform/k8sobjects:
     log_statements:
       - statements:
-          - set(resource.attributes["involved"], ParseJSON(log.body["object.involvedObject"]))
+          - set(resource.attributes["involved"], ParseJSON(log.body["object"]["involvedObject"]))
       - conditions:
-          - log.body["object.kind"] == "Event" and log.body["object.involvedObject.kind"] == "Pod"
+          - log.body["object"]["kind"] == "Event" and log.body["object"]["involvedObject.kind"] == "Pod"
         statements:
-          - set(resource.attributes["k8s.pod.name"], log.body["object.involvedObject.name"])
-          - set(resource.attributes["k8s.namespace.name"], log.body["object.involvedObject.namespace"])
+          - set(resource.attributes["k8s.pod.name"], log.body["object"]["involvedObject"]["name"])
   # Drop high cardinality k8s event attributes
   attributes/drop_event_attrs:
     actions:

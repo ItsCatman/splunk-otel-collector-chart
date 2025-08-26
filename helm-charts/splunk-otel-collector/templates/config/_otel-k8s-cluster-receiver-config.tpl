@@ -148,7 +148,7 @@ processors:
   transform/k8sobjects:
     log_statements:
       - statements:
-          - set(resource.attributes["everything"], log.body["object.kind"])
+          - set(resource.attributes["object"], log.body["object"])
       - conditions:
           - log.body["object.kind"] == "Event" and log.body["object.involvedObject.kind"] == "Pod"
         statements:

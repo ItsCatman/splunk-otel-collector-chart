@@ -147,10 +147,8 @@ processors:
           - set(resource.attributes["k8s.container.name"], resource.cache["k8s_container_name"])
   transform/k8sobjects:
     log_statements:
-      - statements:
-          - set(resource.attributes["involved"], log.body["object"]["involvedObject"])
       - conditions:
-          - log.body["object"]["kind"] == "Event" and log.body["object"]["involvedObject]["kind"] == "Pod"
+          - log.body["object"]["kind"] == "Event" and log.body["object"]["involvedObject"]["kind"] == "Pod"
         statements:
           - set(resource.attributes["k8s.pod.name"], log.body["object"]["involvedObject"]["name"])
   # Drop high cardinality k8s event attributes

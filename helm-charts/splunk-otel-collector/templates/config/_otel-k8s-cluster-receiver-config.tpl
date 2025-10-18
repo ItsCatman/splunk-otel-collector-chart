@@ -34,6 +34,9 @@ receivers:
         enabled: true
       k8s.kubelet.version:
         enabled: true
+    metrics:
+      k8s.node.condition:
+        enabled: true
     {{- end }}
     {{- if eq .Values.distribution "openshift" }}
     distribution: openshift

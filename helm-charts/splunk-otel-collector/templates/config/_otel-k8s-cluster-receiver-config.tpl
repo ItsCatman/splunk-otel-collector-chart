@@ -26,16 +26,7 @@ receivers:
     resource_attributes:
       k8s.container.status.last_terminated_reason:
         enabled: true
-      k8s.hpa.scaletargetref.apiversion:
-        enabled: true
-      k8s.hpa.scaletargetref.kind:
-        enabled: true
-      k8s.hpa.scaletargetref.name:
-        enabled: true
       k8s.kubelet.version:
-        enabled: true
-    metrics:
-      k8s.node.condition:
         enabled: true
     {{- end }}
     {{- if eq .Values.distribution "openshift" }}

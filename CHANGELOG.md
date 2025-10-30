@@ -71,6 +71,16 @@ This Splunk OpenTelemetry Collector for Kubernetes release adopts the [Splunk Op
 
 - `chart`: Fix creation of validateSecret image name to use correct image configuration values ([#2123](https://github.com/signalfx/splunk-otel-collector-chart/pull/2123))
 
+## [0.139.0] - 2025-10-30
+
+###  Enhancements 
+
+- `chart`: Add `global.imageRepository` Helm value and helpers to allow rewriting image registry/hostnames for all chart images. This enables redirecting images to a local or private registry without editing each image reference. The change updates image helpers in `templates/_helpers.tpl` and replaces direct image references where necessary to use the helper. (PR TBD)
+
+###  Maintenance
+
+- `examples`: Restore accidentally deleted example rendered manifest files that were removed in a previous commit.
+
 ## [0.136.0] - 2025-10-02
 
 This Splunk OpenTelemetry Collector for Kubernetes release adopts the [Splunk OpenTelemetry Collector v0.136.1](https://github.com/signalfx/splunk-otel-collector/releases/tag/v0.136.1).

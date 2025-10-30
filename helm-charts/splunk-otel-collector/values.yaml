@@ -1,6 +1,19 @@
 # Configurable parameters and default values for splunk-otel-collector.
 # EKS Add-on has slightly different default values, the overrides can be found in eks_addon/overrides/values.yaml
 
+################################################################################
+# Global configuration.
+################################################################################
+
+global:
+  # Optional global image repository override.
+  # When set, all images in this chart will use this repository instead of their
+  # default repositories. The image name and tag remain unchanged.
+  # Example: Setting this to "my-registry.example.com" will change
+  # "quay.io/signalfx/splunk-otel-collector:tag" to "my-registry.example.com/splunk-otel-collector:tag"
+  image:
+    repository: ""
+
 # nameOverride replaces the name of the chart, when this is used to construct
 # Kubernetes object names.
 nameOverride: ""

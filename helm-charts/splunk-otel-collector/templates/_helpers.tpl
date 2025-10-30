@@ -160,24 +160,74 @@ Get Splunk API URL.
 
 
 {{/*
+Helper to override image repository if global.image.repository is set.
+This function takes a full repository path (e.g., "quay.io/signalfx/splunk-otel-collector")
+and replaces the registry part with the global repository while keeping the image path.
+Example: "quay.io/signalfx/splunk-otel-collector" becomes "my-registry.com/signalfx/splunk-otel-collector"
+*/}}
+{{- define "splunk-otel-collector.globalImageRepository" -}}
+{{- $repository := .repository -}}
+{{- if and .root.Values.global .root.Values.global.image .root.Values.global.image.repository -}}
+{{- $parts := splitList "/" $repository -}}
+{{- if gt (len $parts) 1 -}}
+{{- $imagePath := rest $parts | join "/" -}}
+{{- printf "%s/%s" (trimSuffix "/" .root.Values.global.image.repository) $imagePath -}}
+{{- else -}}
+{{- printf "%s/%s" (trimSuffix "/" .root.Values.global.image.repository) $repository -}}
+{{- end -}}
+{{- else -}}
+{{- $repository -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Helper to override full image string (repository:tag) if global.image.repository is set.
+This function takes a full image string (e.g., "quay.io/signalfx/splunk-otel-collector:v1.0.0")
+and replaces the registry part while keeping the image path and tag.
+Example: "quay.io/signalfx/splunk-otel-collector:v1.0.0" becomes "my-registry.com/signalfx/splunk-otel-collector:v1.0.0"
+*/}}
+{{- define "splunk-otel-collector.globalImageString" -}}
+{{- $image := .image -}}
+{{- if and .root.Values.global .root.Values.global.image .root.Values.global.image.repository -}}
+{{- $parts := splitList ":" $image -}}
+{{- $repository := index $parts 0 -}}
+{{- $tag := "" -}}
+{{- if gt (len $parts) 1 -}}
+{{- $tag = index $parts 1 -}}
+{{- end -}}
+{{- $repoOverride := include "splunk-otel-collector.globalImageRepository" (dict "repository" $repository "root" .root) -}}
+{{- if $tag -}}
+{{- printf "%s:%s" $repoOverride $tag -}}
+{{- else -}}
+{{- $repoOverride -}}
+{{- end -}}
+{{- else -}}
+{{- $image -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Create the opentelemetry collector image name.
 */}}
 {{- define "splunk-otel-collector.image.otelcol" -}}
-{{- printf "%s:%s" .Values.image.otelcol.repository (.Values.image.otelcol.tag | default .Chart.AppVersion) -}}
+{{- $repository := include "splunk-otel-collector.globalImageRepository" (dict "repository" .Values.image.otelcol.repository "root" .) -}}
+{{- printf "%s:%s" $repository (.Values.image.otelcol.tag | default .Chart.AppVersion) -}}
 {{- end -}}
 
 {{/*
 Create the patch-log-dirs image name.
 */}}
 {{- define "splunk-otel-collector.image.initPatchLogDirs" -}}
-{{- printf "%s:%s" .Values.image.initPatchLogDirs.repository .Values.image.initPatchLogDirs.tag | trimSuffix ":" -}}
+{{- $repository := include "splunk-otel-collector.globalImageRepository" (dict "repository" .Values.image.initPatchLogDirs.repository "root" .) -}}
+{{- printf "%s:%s" $repository .Values.image.initPatchLogDirs.tag | trimSuffix ":" -}}
 {{- end -}}
 
 {{/*
 Create the validateSecret image name.
 */}}
 {{- define "splunk-otel-collector.image.validateSecret" -}}
-{{- printf "%s:%s" .Values.image.validateSecret.repository .Values.image.validateSecret.tag | trimSuffix ":" -}}
+{{- $repository := include "splunk-otel-collector.globalImageRepository" (dict "repository" .Values.image.validateSecret.repository "root" .) -}}
+{{- printf "%s:%s" $repository .Values.image.validateSecret.tag | trimSuffix ":" -}}
 {{- end -}}
 
 {{/*

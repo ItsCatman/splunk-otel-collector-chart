@@ -106,12 +106,15 @@ Helper to build entries for instrumentation libraries
     {{- if and (eq (kindOf $.Values.instrumentation.spec) "map") (hasKey $.Values.instrumentation.spec $lib) -}}
       {{- $libSpec := get $.Values.instrumentation.spec $lib }}
 
+      {{- /* Apply global image repository override if set */ -}}
+      {{- $overriddenImage := include "splunk-otel-collector.globalImageString" (dict "image" $libSpec.image "root" $) -}}
+
       {{- /* Instead of including as a string, use a template function that returns proper data structure */ -}}
-      {{- $envData := dict "endpoint" $endpoint "instLibName" $lib "env" $libSpec.env "image" $libSpec.image -}}
+      {{- $envData := dict "endpoint" $endpoint "instLibName" $lib "env" $libSpec.env "image" $overriddenImage -}}
       {{- $envVars := include "splunk-otel-collector.operator.extract-instrumentation-env" $envData | fromYaml -}}
 
       {{- /* Now merge the structured data instead of a string */ -}}
-      {{- $mergedLibSpec := merge (dict "env" $envVars.env) $libSpec -}}
+      {{- $mergedLibSpec := merge (dict "env" $envVars.env "image" $overriddenImage) $libSpec -}}
 
       {{- printf "\n%s:" $lib }}
       {{- toYaml $mergedLibSpec | nindent 2 -}}

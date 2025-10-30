@@ -22,7 +22,7 @@ spec:
       {{- end }}
       containers:
         - name: targetallocator
-          image: {{ .Values.targetAllocator.image }}
+          image: {{ include "splunk-otel-collector.globalImageString" (dict "image" .Values.targetAllocator.image "root" .) }}
           ports:
             - containerPort: 8080
               name: http-port
